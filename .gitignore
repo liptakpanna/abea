@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+*.mk
+*.project
+*.workspace
+compile_flags.txt
+Makefile
+
+.codelite/
+build-Debug/
