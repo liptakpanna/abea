@@ -53,8 +53,7 @@ std::vector<std::vector<Vertex *>> Graph::getRandomRRSet(int length){
 }
 
 int Graph::lambdaCover(Vertex* v, std::vector<std::vector<Vertex *>> RRset){
-	std::vector<Vertex*> S = {v};
-	return lambdaCover(S, RRset);
+	return v->getCoveredRRset(RRset).size();
 }
 
 int Graph::lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>> RRset) {
@@ -86,28 +85,28 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector
 	std::vector<Vertex*> S ;
 	std::set<Vertex*> V = this->getVertices();
 	float costS = 0;
-	bool stop = false;
 	
-	while(!V.empty() && !stop){
-		Vertex *u;
+	while(!V.empty()){
+		Vertex *u = nullptr;
 		float maxCoveragePerCost = 0;
 		for(Vertex *v : V) {
 			float currentCoveragePerCost = (float)lambdaCover(S, RRset, v)/v->getCost();
-			std::cout << currentCoveragePerCost << std::endl;
-			if(currentCoveragePerCost == 0) stop = true;
-			if(currentCoveragePerCost > maxCoveragePerCost){
+			//std::cout << "Current cov: " << currentCoveragePerCost << std::endl;
+			if(currentCoveragePerCost >= maxCoveragePerCost){
 				maxCoveragePerCost = currentCoveragePerCost;
 				u = v;
 			}
 		}
+		
+		//std::cout << "u: " << u->getLabel() << std::endl;
+		
 		if(costS + u->getCost() <= B) {
 			S.push_back(u);
 			costS += u->getCost();
-			std::cout << costS << std::endl;
+			//std::cout<< "Cost S: " << costS << std::endl;
 		}
-		std::cout << V.size() <<std::endl;
-		V.erase(u);
-		std::cout << V.size() << std::endl;
+		if(u != nullptr)
+			V.erase(V.find(u));
 	}
 	
 	int maxCoverage = 0, currentCoverage;
@@ -121,8 +120,6 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector
 			}
 		}
 	}
-	
-	std::cout << s->getLabel() << std::endl;
 	
 	if(maxCoverage > lambdaCover(S, RRset))
 		return {s};

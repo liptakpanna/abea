@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <set>
+#include <vector>
 
 class Edge;
 
@@ -23,6 +24,8 @@ public:
 	
 	void addIncomingEdge(Edge *n) {incomingEdges.insert(n);}
 	void addOutgoingEdge(Edge *n) {outgoingEdges.insert(n);}
+	
+	std::vector<std::vector<Vertex *>> getCoveredRRset(std::vector<std::vector<Vertex *>> RRset);
 	
 	bool operator() (const Vertex& lhs, const Vertex& rhs) const
 	{return lhs.label>rhs.label;}
