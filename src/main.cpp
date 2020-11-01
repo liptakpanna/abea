@@ -21,7 +21,7 @@ int main()
 	g.addEdge(&e3);
 	g.addEdge(&e4);
 	
-	std::vector<Vertex*> S = {&v3,&v2};
+	std::vector<Vertex*> S_ = {&v3,&v2};
 	
 	g.printVertices();
 	std::vector<std::vector<Vertex *>> RRset = g.getRandomRRSet(10);
@@ -31,8 +31,12 @@ int main()
 		std::cout  << std::endl;
 	}
 	
-	std::cout << g.lambdaCover(S,RRset) << std::endl;
-	std::cout << g.lambdaCover(S,RRset, &v1) << std::endl;
+	std::cout << g.lambdaCover(S_, RRset) << std::endl;
+	
+	std::vector<Vertex *> S = g.budgetedMaxCoverage(5, RRset);
+	
+	for(Vertex *v : S) std::cout << v->getLabel() << " ";
+	std::cout << std::endl;
 	
 	return 0;
 }

@@ -27,11 +27,7 @@ void Graph::printVertices(){
 }
 
 std::vector<Vertex *> Graph::getRandomRSet(){
-	int randIndex = rand() % this->vertices.size();
-	//std::cout << randIndex << std::endl;
-	std::set<Vertex*>::iterator it = this->vertices.begin();
-	std::advance(it, randIndex);
-	Vertex *randomVertex = *it;
+	Vertex *randomVertex = this->getRandomVertex();
 	//std::cout << randomVertex->getLabel() << std::endl;
 	std::vector<Vertex*> Rset = {randomVertex};
 	
@@ -56,7 +52,14 @@ std::vector<std::vector<Vertex *>> Graph::getRandomRRSet(int length){
 	return RRset;
 }
 
+int Graph::lambdaCover(Vertex* v, std::vector<std::vector<Vertex *>> RRset){
+	std::vector<Vertex*> S = {v};
+	return lambdaCover(S, RRset);
+}
+
 int Graph::lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>> RRset) {
+	if(S.empty()) return 0;
+	
 	int result = 0;
 	for(int i = 0; i < RRset.size(); i++) {
 		std::vector <Vertex*> intersection;
@@ -70,6 +73,61 @@ int Graph::lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>
 	std::vector<Vertex*> unio = S;
 	unio.push_back(v);
 	return this->lambdaCover(unio, RRset) - this->lambdaCover(S, RRset);
+}
+
+Vertex* Graph::getRandomVertex(){
+	int randIndex = rand() % this->vertices.size();
+	std::set<Vertex*>::iterator it = this->vertices.begin();
+	std::advance(it, randIndex);
+	return *it;
+}
+
+std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector<Vertex *>> RRset) {
+	std::vector<Vertex*> S ;
+	std::set<Vertex*> V = this->getVertices();
+	float costS = 0;
+	bool stop = false;
+	
+	while(!V.empty() && !stop){
+		Vertex *u;
+		float maxCoveragePerCost = 0;
+		for(Vertex *v : V) {
+			float currentCoveragePerCost = (float)lambdaCover(S, RRset, v)/v->getCost();
+			std::cout << currentCoveragePerCost << std::endl;
+			if(currentCoveragePerCost == 0) stop = true;
+			if(currentCoveragePerCost > maxCoveragePerCost){
+				maxCoveragePerCost = currentCoveragePerCost;
+				u = v;
+			}
+		}
+		if(costS + u->getCost() <= B) {
+			S.push_back(u);
+			costS += u->getCost();
+			std::cout << costS << std::endl;
+		}
+		std::cout << V.size() <<std::endl;
+		V.erase(u);
+		std::cout << V.size() << std::endl;
+	}
+	
+	int maxCoverage = 0, currentCoverage;
+	Vertex *s;
+	for(Vertex *v : this->getVertices()) {
+		if(v->getCost() <= B) {
+			currentCoverage = lambdaCover(v, RRset);
+			if(currentCoverage > maxCoverage){
+				s = v;
+				maxCoverage = currentCoverage;
+			}
+		}
+	}
+	
+	std::cout << s->getLabel() << std::endl;
+	
+	if(maxCoverage > lambdaCover(S, RRset))
+		return {s};
+	else
+		return S;
 }
 
 Graph::~Graph()
