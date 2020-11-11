@@ -4,6 +4,7 @@
 #include "Vertex.hpp"
 #include "Edge.hpp"
 #include <vector>
+#include <string>
 
 class Graph
 {
@@ -11,11 +12,14 @@ class Graph
 	std::set<Edge *> edges;
 public:
 	Graph();
+    Graph(std::string source_file);
 	
 	void addVertex(Vertex *v) {vertices.insert(v);}
 	void addEdge(Edge *e);
 	
 	std::set<Vertex *> getVertices() {return vertices;}
+    std::set<Edge *> getEdges() {return edges;}
+    Vertex* findVertexByLabel(std::string label);
 	void printVertices();
 	Vertex* getRandomVertex();
 	

@@ -3,10 +3,58 @@
 #include <ctime>
 #include <algorithm>
 #include <iterator>
+#include <iostream>
+#include <sstream>
+#include <fstream>
 
 Graph::Graph()
 {
 	srand((unsigned int)time(NULL));
+}
+
+Graph::Graph(std::string source_file) {
+    srand((unsigned int)time(NULL));
+
+    std::string line;
+    bool isVertex = true;
+    std::ifstream file(source_file);
+    if(file.is_open()) {
+        getline(file,line); //First line is #Vertex
+        while(getline(file,line)){
+            std::istringstream stream (line);
+            if(line.find("# Edge") != std::string::npos) {
+                isVertex = false;
+                continue;
+            }
+            if(isVertex) {
+                std::string label, cost;
+                stream >> label >> cost;
+                Vertex *v = new Vertex(label,std::stof(cost));
+                this->addVertex(v);
+            } else {
+                std::string source, dest, prop;
+                stream >> source >> dest >> prop;
+                Vertex *s = this->findVertexByLabel(source);
+                Vertex *d = this->findVertexByLabel(dest);
+                if(s == nullptr || d == nullptr) {
+                    std::cout << "Error vertex not defined" <<std::endl;
+                }
+                else {
+                    Edge* e = new Edge(s,d,std::stof(prop));
+                    this->addEdge(e);
+                }
+            }
+        }
+        file.close();
+    }
+    else std::cout << "Unable to open file";
+}
+
+Vertex* Graph::findVertexByLabel(std::string label){
+    for(Vertex* v: this->getVertices()){
+        if(v->getLabel() == label) return v;
+    }
+    return nullptr;
 }
 
 void Graph::addEdge(Edge *e){

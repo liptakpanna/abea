@@ -11,6 +11,8 @@ class Edge
 public:
 	Edge() : source(nullptr), destination(nullptr), propagationProbability(0) {}
 	Edge(Vertex *_source, Vertex *_destination, float _propagationProb);
+
+    void setPropagationProbability(float p) {propagationProbability = p;}
 	
 	float getPropagationProbability() {return propagationProbability;}
 	Vertex* getSource() {return source;}
