@@ -26,6 +26,8 @@ public:
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
+    void paintChosen();
+    void paintDefault();
 
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
@@ -37,6 +39,7 @@ private:
     QVector<QtEdge *> edgeList;
     QPointF newPos;
     GraphWidget *graph;
+    QColor fillColor = Qt::blue;
 };
 //! [0]
 

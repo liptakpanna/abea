@@ -12,7 +12,7 @@ void GraphManager::getDemoGraph()
     if (tempDir.isValid()) {
         const QString tempFile = tempDir.path() + "/demo_graph.txt";
           if (QFile::copy(":demo_graph.txt", tempFile)) {
-              Graph *g = new Graph(tempFile.toStdString());
+              g = new Graph(tempFile.toStdString());
               for(Vertex *v : g->getVertices()) {
                   //emit(printVertex(v->getLabel(), std::to_string(v->getCost())));
                   emit(addVertex(v->getLabel(), v->getCost()));
@@ -23,4 +23,14 @@ void GraphManager::getDemoGraph()
     }
 
     tempDir.remove();
+}
+
+void GraphManager::doBudgetedMaxCover(float budget, int RRLength)
+{
+    emit(setNodesToDefault());
+    std::vector<Vertex*> result = g->budgetedMaxCoverage(budget, RRLength);
+    for(Vertex *v : result) {
+        emit(paintVertex(v->getLabel()));
+    }
+    std::cout << result.size() << std::endl;
 }

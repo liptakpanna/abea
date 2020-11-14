@@ -13,11 +13,11 @@ class Graph
 public:
 	Graph();
     Graph(std::string source_file);
-	
-	void addVertex(Vertex *v) {vertices.insert(v);}
+
+    void addVertex(Vertex *v) {vertices.insert(v);}
 	void addEdge(Edge *e);
 	
-	std::set<Vertex *> getVertices() {return vertices;}
+    std::set<Vertex *> getVertices() {return vertices;}
     std::set<Edge *> getEdges() {return edges;}
     Vertex* findVertexByLabel(std::string label);
 	void printVertices();
@@ -30,7 +30,8 @@ public:
 	int lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>> RRset);
 	int lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>> RRset, Vertex* v);
 	
-	std::vector<Vertex*> budgetedMaxCoverage(float B, std::vector<std::vector<Vertex *>> RRset);
+    std::vector<Vertex*> budgetedMaxCoverage(float budget, std::vector<std::vector<Vertex *>> RRset);
+    std::vector<Vertex*> budgetedMaxCoverage(float budget, int RRsetLength);
 	
 	~Graph();
 

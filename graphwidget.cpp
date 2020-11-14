@@ -75,6 +75,8 @@ GraphWidget::GraphWidget(QWidget *parent, GraphManager *g)
     graphManager = g;
     connect(graphManager, SIGNAL(addVertex(std::string, float)), this, SLOT(graphManager_AddNode(std::string, float)));
     connect(graphManager, SIGNAL(addEdge(std::string, std::string, float)), this, SLOT(graphManager_AddEdge(std::string, std::string, float)));
+    connect(graphManager, SIGNAL(paintVertex(std::string)), this, SLOT(graphManager_PaintNode(std::string)));
+    connect(graphManager, SIGNAL(setNodesToDefault()), this, SLOT(graphManager_setNodesToDefault()));
 }
 
 void GraphWidget::itemMoved()
@@ -219,6 +221,20 @@ void GraphWidget::graphManager_AddEdge(std::string s, std::string d, float p)
     scene->addItem(e);
     //source->setPos(-150 + QRandomGenerator::global()->bounded(300), -150 + QRandomGenerator::global()->bounded(300));;
     //dest->setPos(-150 + QRandomGenerator::global()->bounded(300), -150 + QRandomGenerator::global()->bounded(300));;
+}
+
+void GraphWidget::graphManager_PaintNode(std::string label)
+{
+    for (QtNode *node : nodes) {
+        if(node->getLabel() == label) node->paintChosen();
+    }
+}
+
+void GraphWidget::graphManager_setNodesToDefault()
+{
+    for (QtNode *node : nodes) {
+        node->paintDefault();
+    }
 }
 
 

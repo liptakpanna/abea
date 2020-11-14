@@ -84,6 +84,8 @@ protected:
 private slots:
     void graphManager_AddNode(std::string label, float cost);
     void graphManager_AddEdge(std::string s, std::string d, float p);
+    void graphManager_PaintNode(std::string label);
+    void graphManager_setNodesToDefault();
 
 private:
     int timerId = 0;

@@ -76,7 +76,6 @@ void Graph::printVertices(){
 
 std::vector<Vertex *> Graph::getRandomRSet(){
 	Vertex *randomVertex = this->getRandomVertex();
-	//std::cout << randomVertex->getLabel() << std::endl;
 	std::vector<Vertex*> Rset = {randomVertex};
 	
 	for(int i = 0; i < Rset.size(); i++) {
@@ -93,7 +92,7 @@ std::vector<Vertex *> Graph::getRandomRSet(){
 }
 
 std::vector<std::vector<Vertex *>> Graph::getRandomRRSet(int length){
-	std::vector<std::vector<Vertex *>> RRset;
+    std::vector<std::vector<Vertex *>> RRset;
 	for(int i = 0; i < length; i++){
 		RRset.push_back(this->getRandomRSet());
 	}
@@ -123,14 +122,14 @@ int Graph::lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>
 }
 
 Vertex* Graph::getRandomVertex(){
-	int randIndex = rand() % this->vertices.size();
-	std::set<Vertex*>::iterator it = this->vertices.begin();
+    int randIndex = rand() % vertices.size();
+    std::set<Vertex*>::iterator it = vertices.begin();
 	std::advance(it, randIndex);
 	return *it;
 }
 
-std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector<Vertex *>> RRset) {
-	std::vector<Vertex*> S ;
+std::vector<Vertex*> Graph::budgetedMaxCoverage(float budget, std::vector<std::vector<Vertex *>> RRset) {
+    std::vector<Vertex*> S ;
 	std::set<Vertex*> V = this->getVertices();
 	float costS = 0;
 	
@@ -148,7 +147,7 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector
 		
 		//std::cout << "u: " << u->getLabel() << std::endl;
 		
-		if(costS + u->getCost() <= B) {
+        if(costS + u->getCost() <= budget) {
 			S.push_back(u);
 			costS += u->getCost();
 			//std::cout<< "Cost S: " << costS << std::endl;
@@ -160,7 +159,7 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector
 	int maxCoverage = 0, currentCoverage;
 	Vertex *s;
 	for(Vertex *v : this->getVertices()) {
-		if(v->getCost() <= B) {
+        if(v->getCost() <= budget) {
 			currentCoverage = lambdaCover(v, RRset);
 			if(currentCoverage > maxCoverage){
 				s = v;
@@ -172,7 +171,12 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float B, std::vector<std::vector
 	if(maxCoverage > lambdaCover(S, RRset))
 		return {s};
 	else
-		return S;
+        return S;
+}
+
+std::vector<Vertex *> Graph::budgetedMaxCoverage(float budget, int RRsetLength)
+{
+    return budgetedMaxCoverage(budget, getRandomRRSet(RRsetLength));
 }
 
 Graph::~Graph()

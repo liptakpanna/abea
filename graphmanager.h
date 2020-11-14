@@ -10,11 +10,14 @@ class GraphManager : public QObject
 public:
     explicit GraphManager(QObject *parent = nullptr);
     void getDemoGraph();
+    void doBudgetedMaxCover(float budget, int RRLength);
 
 signals:
     void printVertex(std::string label, std::string cost);
     void addVertex(std::string label, float cost);
     void addEdge(std::string source, std::string dest, float p);
+    void paintVertex(std::string label);
+    void setNodesToDefault();
 
 private:
     Graph *g;

@@ -120,7 +120,7 @@ QPainterPath QtNode::shape() const
 void QtNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::blue);
+    painter->setBrush(fillColor);
     painter->drawEllipse(-10, -10, 20, 20);
     painter->setPen(QPen(Qt::white, 3));
     painter->drawText(-5,3,QString::number(this->getCost()));
@@ -141,6 +141,18 @@ void QtNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 
     painter->setPen(QPen(Qt::black, 0));
     painter->drawEllipse(-10, -10, 20, 20);*/
+}
+
+void QtNode::paintChosen()
+{
+    fillColor = Qt::red;
+    this->update(this->boundingRect());
+}
+
+void QtNode::paintDefault()
+{
+    fillColor = Qt::blue;
+    this->update(this->boundingRect());
 }
 //! [10]
 

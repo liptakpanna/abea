@@ -6,6 +6,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include "graphmanager.h"
+#include <QStackedLayout>
 
 class MainWindow : public QWidget
 {
@@ -19,15 +20,28 @@ public:
 private slots:
     void on_demoButton_clicked();
     void on_algoButton_clicked();
-    void graphManager_PrintVertex(std::string label, std::string cost);
+    void on_backButton_clicked();
+    void on_runDemo();
+    void setDemoBudget(double _budget);
+    void setDemoRRSetSize(int _size);
 
 private:
     GraphManager *graphManager;
 
     QPushButton *demoButton = new QPushButton(tr("Demo"));
-    QPushButton *algoButton = new QPushButton(tr("Run algorithm with custom parameters"));
-    QLabel *demoLabel;
+    QPushButton *algoButton = new QPushButton(tr("Run algorithm \n with \n custom parameters"));
+    QPushButton *backButton = new QPushButton(tr("Back"));
 
-    QHBoxLayout* mainLayout;
+    QHBoxLayout *menuLayout;
+    QVBoxLayout *demoLayout, *mainLayout;
+    QFont defaultFont;
+
+    QWidget *demoPage, *menu, *runAlg;
+    QStackedLayout *stackedLayout;
+
+    float demoBudget;
+    int demoRRsetSize;
+
+    void setDemoPage();
 };
 #endif // MAINWINDOW_H
