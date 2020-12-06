@@ -1,0 +1,15 @@
+<RCC>
+    <qresource>
+        <file>demo_graph.txt</file>
+        <file>pokec_1.txt</file>
+        <file>pokec_2.txt</file>
+        <file>pokec_3.txt</file>
+        <file>pokec_4.txt</file>
+        <file>pokec_5.txt</file>
+        <file>pokec_6.txt</file>
+        <file>pokec_7.txt</file>
+        <file>pokec_8.txt</file>
+        <file>pokec_9.txt</file>
+        <file>pokec_10.txt</file>
+    </qresource>
+</RCC>

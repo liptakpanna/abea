@@ -16,6 +16,9 @@ class Vertex
 public:
 	Vertex() : label(""), cost(0) {}
 	Vertex(std::string _label, float _cost) : label(_label), cost(_cost) {}
+
+    void setLabel(std::string _label) {label = _label;}
+    void setCost(float _cost) {cost = _cost;}
 	
 	float getCost() {return cost;}
 	std::string getLabel() {return label;}

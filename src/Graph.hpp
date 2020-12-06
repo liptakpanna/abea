@@ -4,6 +4,7 @@
 #include "Vertex.hpp"
 #include "Edge.hpp"
 #include <vector>
+#include <string>
 
 class Graph
 {
@@ -11,11 +12,16 @@ class Graph
 	std::set<Edge *> edges;
 public:
 	Graph();
-	
-	void addVertex(Vertex *v) {vertices.insert(v);}
+    Graph(std::string source_file);
+
+    void loadPokec(std::string source_file, int minCost, int maxCost);
+
+    void addVertex(Vertex *v) {vertices.insert(v);}
 	void addEdge(Edge *e);
 	
-	std::set<Vertex *> getVertices() {return vertices;}
+    std::set<Vertex *> getVertices() {return vertices;}
+    std::set<Edge *> getEdges() {return edges;}
+    Vertex* findVertexByLabel(std::string label);
 	void printVertices();
 	Vertex* getRandomVertex();
 	
@@ -26,7 +32,8 @@ public:
 	int lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>> RRset);
 	int lambdaCover(std::vector<Vertex*> S, std::vector<std::vector<Vertex *>> RRset, Vertex* v);
 	
-	std::vector<Vertex*> budgetedMaxCoverage(float B, std::vector<std::vector<Vertex *>> RRset);
+    std::vector<Vertex*> budgetedMaxCoverage(float budget, std::vector<std::vector<Vertex *>> RRset);
+    std::vector<Vertex*> budgetedMaxCoverage(float budget, int RRsetLength);
 	
 	~Graph();
 
