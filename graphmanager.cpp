@@ -34,3 +34,13 @@ void GraphManager::doBudgetedMaxCover(float budget, int RRLength)
     }
     std::cout << result.size() << std::endl;
 }
+
+void GraphManager::doImage(float budget, double threshold)
+{
+    emit(setNodesToDefault());
+    std::vector<Vertex*> result = g->image(budget, threshold);
+    for(Vertex *v : result) {
+        emit(paintVertex(v->getLabel()));
+    }
+    std::cout << result.size() << std::endl;
+}

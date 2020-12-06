@@ -23,7 +23,7 @@ private slots:
     void on_backButton_clicked();
     void on_runDemo();
     void setDemoBudget(double _budget);
-    void setDemoRRSetSize(int _size);
+    void setDemoThreshold(double _t);
 
 private:
     GraphManager *graphManager;
@@ -40,7 +40,7 @@ private:
     QStackedLayout *stackedLayout;
 
     float demoBudget;
-    int demoRRsetSize;
+    int demoThreshold;
 
     void setDemoPage();
 };

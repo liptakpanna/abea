@@ -11,6 +11,7 @@ public:
     explicit GraphManager(QObject *parent = nullptr);
     void getDemoGraph();
     void doBudgetedMaxCover(float budget, int RRLength);
+    void doImage(float budget, double threshold);
 
 signals:
     void printVertex(std::string label, std::string cost);

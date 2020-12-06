@@ -12,10 +12,10 @@ v10 28
 v11 13
 v12 9
 # Edge: Source Destination Probability
-v1 v2 0.6
-v1 v3 0.7
+v1 v2 0.2
+v1 v3 0.3
 v3 v4 0.4
-v1 v5 0.66
+v1 v5 0.16
 v5 v6 0.3
 v6 v2 0.2
 v7 v2 0.85
@@ -27,4 +27,4 @@ v7 v9 0.69
 v9 v10 0.5
 v7 v11 0.81
 v11 v12 0.4
-v12 v4 0.6
+v12 v4 0.3
