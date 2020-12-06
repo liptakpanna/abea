@@ -6,6 +6,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <math.h>
 
 Graph::Graph()
 {
@@ -177,6 +178,98 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float budget, std::vector<std::v
 std::vector<Vertex *> Graph::budgetedMaxCoverage(float budget, int RRsetLength)
 {
     return budgetedMaxCoverage(budget, getRandomRRSet(RRsetLength));
+}
+
+std::vector<Vertex*> Graph::image(float budget, float delta){
+    std::vector<Vertex*> s;
+
+    float thetaZero = 1;
+    float thetaMax = 10;
+
+    float theta = thetaZero;
+    float iMax = log2(thetaMax / thetaZero);
+
+    while(theta <= thetaMax) {
+        std::vector<std::vector<Vertex *>> R1 = this -> getRandomRRSet(theta);
+        std::vector<std::vector<Vertex *>> R2 = this -> getRandomRRSet(theta);
+
+        s = this->budgetedMaxCoverage(budget, R1);
+        int probability = this -> lambdaCover(s, R2);
+
+        float desired = (1 - ((2 * delta) / (3 * iMax)));
+        if (probability >= desired) {
+            return s;
+        }
+
+        theta = 2 * theta;
+    }
+
+    return s;
+}
+
+std::vector<Vertex*> Graph::budgetedThresholdGreedy(float budget, float threshold, std::vector<std::vector<Vertex *>> RRset) {
+    std::vector<Vertex*> S;
+    float dMax= 0;
+    float dMin = 0;
+    Vertex *maxCostVertex;
+    float maxCost = 0;
+    Vertex *minCostVertex = *(this->getVertices().begin());
+    float minCost = minCostVertex->getCost();
+    Vertex *s;
+    float maxCoverage;
+    float currentCost;
+    float currentRatio;
+    float currentCoverage;
+
+    for(Vertex *v : this->getVertices()) {
+        if (v->getCost() <= budget) {
+            currentCoverage = lambdaCover(v, RRset);
+            currentCost = v->getCost();
+            currentRatio = currentCoverage / currentCost;
+
+            if (currentRatio > dMax) {
+                maxCostVertex = v;
+                dMax = currentRatio;
+            }
+
+            if (currentCost > maxCost) {
+                maxCost = currentCost;
+                dMin = 1 / maxCost;
+            }
+
+            if(currentCost < minCost){
+                minCostVertex = v;
+                minCost = currentCost;
+            }
+
+            if(currentCoverage > maxCoverage) {
+                maxCoverage = currentCoverage;
+                s = v;
+            }
+        }
+    }
+
+    float costOfSeedSet = 0;
+    for(float w = dMax; w >= dMin * (1 - threshold); w = w * (1 - threshold)) {
+        for(Vertex *v : this->getVertices()) {
+
+            float currentCoveragePerCost = (float)lambdaCover(S, RRset, v)/v->getCost();
+            if ((costOfSeedSet + v->getCost()) <= budget && currentCoveragePerCost >= w) {
+                S.push_back(v);
+                costOfSeedSet += v->getCost();
+            }
+
+            if (costOfSeedSet + minCost > budget) {
+                break;
+            }
+
+        }
+    }
+
+    if(maxCoverage > lambdaCover(S, RRset))
+        return {s};
+    else
+        return S;
 }
 
 Graph::~Graph()

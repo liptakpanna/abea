@@ -32,6 +32,9 @@ public:
 	
     std::vector<Vertex*> budgetedMaxCoverage(float budget, std::vector<std::vector<Vertex *>> RRset);
     std::vector<Vertex*> budgetedMaxCoverage(float budget, int RRsetLength);
+
+    std::vector<Vertex*> image(float budget, float delta);
+    std::vector<Vertex*> budgetedThresholdGreedy(float budget, float threshold, std::vector<std::vector<Vertex *>> RRset);
 	
 	~Graph();
 
