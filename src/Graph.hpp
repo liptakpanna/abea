@@ -36,6 +36,9 @@ public:
     std::vector<Vertex*> image(float budget, float delta);
     std::vector<Vertex*> budgetedThresholdGreedy(float budget, float threshold, std::vector<std::vector<Vertex *>> RRset);
 	
+    float initializeThetaZero(float z, float delta, float kMin, float n, float e);
+    float initializeThetaMax(float z, float delta, float kMax, float n, float e);
+
 	~Graph();
 
 };
