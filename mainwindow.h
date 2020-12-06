@@ -5,6 +5,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QtCharts>
 #include "graphmanager.h"
 #include <QStackedLayout>
 
@@ -19,18 +20,20 @@ public:
 
 private slots:
     void on_demoButton_clicked();
-    void on_algoButton_clicked();
+    void on_pokecButton_clicked();
     void on_backButton_clicked();
     void on_runDemo();
-    void setDemoBudget(double _budget);
+    void on_runPokec();
+    void setDemoBudget(float _budget);
+    void setPokecBudget(float _budget);
+    void setPokecThresHold(float _threshold);
     void setDemoRRSetSize(int _size);
 
 private:
-    GraphManager *graphManager;
+    GraphManager *graphManager, *pokecManager;
 
     QPushButton *demoButton = new QPushButton(tr("Demo"));
-    QPushButton *algoButton = new QPushButton(tr("Run algorithm \n with \n custom parameters"));
-    QPushButton *backButton = new QPushButton(tr("Back"));
+    QPushButton *pokecButton = new QPushButton(tr("Run algorithm \n on Pokec"));
 
     QHBoxLayout *menuLayout;
     QVBoxLayout *demoLayout, *mainLayout;
@@ -38,10 +41,17 @@ private:
 
     QWidget *demoPage, *menu, *runAlg;
     QStackedLayout *stackedLayout;
+    QLabel *pokecInfo;
 
-    float demoBudget;
+    QChart *stepCountChart, *expectedInfluenceChart;
+    QBarSet *imageExpInf, *imageBrExpInf, *imageStep, *imageBrStep;
+
+    float demoBudget, pokecBudget, pokecThreshold;
     int demoRRsetSize;
 
     void setDemoPage();
+    void setPokecPage();
+    void showPokecImportDialog();
+    void createCharts();
 };
 #endif // MAINWINDOW_H

@@ -50,6 +50,39 @@ Graph::Graph(std::string source_file) {
     else std::cout << "Unable to open file";
 }
 
+void Graph::loadPokec(std::string source_file, int minCost, int maxCost)
+{
+    srand((unsigned int)time(NULL));
+
+    std::string line;
+    std::ifstream file(source_file);
+    if(file.is_open()) {
+        while(getline(file,line)){
+            std::istringstream stream (line);
+            std::string source, dest;
+            stream >> source >> dest;
+            Vertex *s = findVertexByLabel("v"+source);
+            Vertex *d = findVertexByLabel("v"+dest);
+            if(s == nullptr){
+                float sCost = rand()%(maxCost-minCost + 1) + minCost;
+                s = new Vertex("v"+source, sCost);
+                this->addVertex(s);
+            }
+            if(d == nullptr){
+                float dCost = rand()%(maxCost-minCost + 1) + minCost;
+                d = new Vertex("v"+dest, dCost);
+                this->addVertex(d);
+            }
+            float prop = ((double) rand() / (RAND_MAX)); //(0,1)
+            if( prop < 0 || prop > 1) std::cout << "Bad propagation probability" << std::endl;
+            Edge* e = new Edge(s,d,prop);
+            this->addEdge(e);
+        }
+        file.close();
+    }
+    else std::cout << "Unable to open file";
+}
+
 Vertex* Graph::findVertexByLabel(std::string label){
     for(Vertex* v: this->getVertices()){
         if(v->getLabel() == label) return v;
