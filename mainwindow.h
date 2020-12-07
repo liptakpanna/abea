@@ -24,10 +24,15 @@ private slots:
     void on_backButton_clicked();
     void on_runDemo();
     void on_runPokec();
-    void setDemoBudget(float _budget);
-    void setPokecBudget(float _budget);
-    void setPokecThresHold(float _threshold);
+    void setDemoBudget(double _budget);
+    void setPokecBudget(double _budget);
+    void setPokecThresHold(double _threshold);
     void setDemoThreshold(double _t);
+    void setPokecEdges(int e);
+    void graphManager_getImageExpectedInfluence(double inf);
+    void graphManager_getImageTime(double t);
+    void graphManager_getImageBrExpectedInfluence(double inf);
+    void graphManager_getImageBrTime(double t);
 
 
 private:
@@ -45,10 +50,11 @@ private:
     QLabel *pokecInfo;
 
     QChart *stepCountChart, *expectedInfluenceChart;
-    QBarSet *imageExpInf, *imageBrExpInf, *imageStep, *imageBrStep;
+    QBarSet *imageExpInf, *imageBrExpInf, *imageTime, *imageBrTime;
+    QChartView *chartViewInf, *chartViewTime;
 
-    float demoBudget, pokecBudget, pokecThreshold;
-    double demoThreshold;
+    double demoBudget, pokecBudget, pokecThreshold,demoThreshold;
+    int pokecEdges;
 
     void setDemoPage();
     void setPokecPage();

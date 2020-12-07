@@ -170,9 +170,9 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float budget, std::vector<std::v
     float costS = 0;
 
     auto startTime = std::chrono::high_resolution_clock::now();
-    std::cout <<"\n ========== STARTED BUDGETED MAX COVERAGE ========== " << std::endl;
+   // std::cout <<"\n ========== STARTED BUDGETED MAX COVERAGE ========== " << std::endl;
     while(!V.empty()){
-        std::cout << "\tBUDGETED MAX COVERAGE ITERATION = " << ++numberOfIterations << std::endl;
+       // std::cout << "\tBUDGETED MAX COVERAGE ITERATION = " << ++numberOfIterations << std::endl;
         Vertex *u = nullptr;
         float maxCoveragePerCost = 0;
         for(Vertex *v : V) {
@@ -209,10 +209,10 @@ std::vector<Vertex*> Graph::budgetedMaxCoverage(float budget, std::vector<std::v
     }
 
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stopTime - startTime);
-    std::cout << "The budgeted max coverage algorithm was running for " << duration.count() << " seconds";
-    std::cout << ", with " << numberOfIterations << " iterations." << std::endl;
+   // std::cout << "The budgeted max coverage algorithm was running for " << duration.count() << " seconds";
+    //std::cout << ", with " << numberOfIterations << " iterations." << std::endl;
 
-    std::cout << "\n ========== ENDED BUDGETED MAX COVERAGE ========== "<< std::endl;
+   // std::cout << "\n ========== ENDED BUDGETED MAX COVERAGE ========== "<< std::endl;
     if(maxCoverage > lambdaCover(S, RRset))
         return {s};
     else
@@ -236,7 +236,7 @@ int Graph::getKmin(std::vector<Vertex *> sortedVertices, float budget)
             kmin++;
         }
         else
-            return kmin;
+            break;
     }
     return kmin;
 }
@@ -245,25 +245,28 @@ int Graph::getKmax(std::vector<Vertex *> sortedVertices, float budget)
 {
     int kmax = 0;
     float currBudget = 0;
-    for(Vertex *v : sortedVertices) {
+    for(int i = 0; i < sortedVertices.size(); i++) {
+        Vertex *v = sortedVertices[i];
         if(currBudget + v->getCost() <= budget) {
             currBudget += v->getCost();
             kmax++;
         }
         else
-            return kmax;
+            break;
     }
     return kmax;
 }
 
 
 int Graph::initializeThetaMax(float nu, float threshold, float delta, float kMax, float n, float e) {
-    float z = 1/exp(nu*(1-threshold));
+    //std::cout << "kmax = " << kMax << std::endl;
+    double z = 1/exp(nu*(1-threshold));
     return (2 * n * pow( ( ( (1 - z) * sqrt( log(6 / delta) ) ) + sqrt( (1 - z) * ( ( kMax * log(n) ) + log(6 / delta) ) ) ), 2) ) / ( pow(e, 2) * kMax );
 }
 
 int Graph::initializeThetaZero(float nu, float threshold, float delta, float kMin, float n, float e) {
-    float z = 1/exp(nu*(1-threshold));
+    //std::cout << "kmin = " << kMin << std::endl;
+    double z = 1/exp(nu*(1-threshold));
     return ( 2 * n * pow( ( ( (1 - z) * sqrt( log(6 / delta) ) ) + sqrt( (1 - z) * ( ( kMin * log(n) ) + log(6 / delta) ) ) ), 2) ) / ( pow(e, 2) * n );
 }
 
@@ -338,6 +341,7 @@ Graph::stat Graph::getImageBRStat(float budget, float delta)
     while(theta <= thetaMax) {
         std::vector<std::vector<Vertex *>> R1 = this -> getRandomRRSet(theta);
         std::vector<std::vector<Vertex *>> R2 = this -> getRandomRRSet(theta);
+        std::cout << "DONE" <<std::endl;
 
         s1 = this->budgetedThresholdGreedy(budget, delta, R1);
 
@@ -352,6 +356,7 @@ Graph::stat Graph::getImageBRStat(float budget, float delta)
         }
 
         theta = 2 * theta;
+        std::cout << "THETA: " << theta << std::endl;
     }
     auto imageStopTime = std::chrono::high_resolution_clock::now();
 
@@ -379,7 +384,7 @@ Graph::stat Graph::getImageStat(float budget, float delta)
     while(theta <= thetaMax) {
         std::vector<std::vector<Vertex *>> R1 = this -> getRandomRRSet(theta);
         std::vector<std::vector<Vertex *>> R2 = this -> getRandomRRSet(theta);
-
+        std::cout << "DONE " << std::endl;
         s1 = this->budgetedMaxCoverage(budget, R1);
 
         int probability = this -> lambdaCover(s1, R2);
@@ -393,6 +398,7 @@ Graph::stat Graph::getImageStat(float budget, float delta)
         }
 
         theta = 2 * theta;
+        std::cout << "THETA: " << theta << std::endl;
     }
     auto imageStopTime = std::chrono::high_resolution_clock::now();
 
@@ -401,7 +407,7 @@ Graph::stat Graph::getImageStat(float budget, float delta)
 }
 
 std::vector<Vertex*> Graph::budgetedThresholdGreedy(float budget, float threshold, std::vector<std::vector<Vertex *>> RRset) {
-    std::cout << "\n ========== STARTED BUDGETED TRESHOLD GREEDY ========== " << std::endl;
+    //std::cout << "\n ========== STARTED BUDGETED TRESHOLD GREEDY ========== " << std::endl;
     if(threshold == 0) {
         threshold = 0.7;
     }
@@ -452,15 +458,15 @@ std::vector<Vertex*> Graph::budgetedThresholdGreedy(float budget, float threshol
     float costOfSeedSet = 0;
     for(float w = dMax; w >= dMin * (1 - threshold); w = w * (1 - threshold)) {
         for(Vertex *v : this->getVertices()) {
-            std::cout << "\tBUDGETED TRESHOLD GREEDY ITERATION = " << ++numberOfIterations << std::endl;
+           // std::cout << "\tBUDGETED TRESHOLD GREEDY ITERATION = " << ++numberOfIterations << std::endl;
 
             float currentCoveragePerCost = (float)lambdaCover(S, RRset, v) / v->getCost();
 
-            std::cout << "\tCOST OF SEEDSET = " << costOfSeedSet << std::endl;
-            std::cout << "\tCOST OF VERTEX = " << v->getCost() << std::endl;
+            //std::cout << "\tCOST OF SEEDSET = " << costOfSeedSet << std::endl;
+           // std::cout << "\tCOST OF VERTEX = " << v->getCost() << std::endl;
 
-            std::cout << "\tCURRENT COVERAGE PER COST = " << currentCoveragePerCost << std::endl;
-            std::cout << "\tCURRENT W = " << w << std::endl;
+          //  std::cout << "\tCURRENT COVERAGE PER COST = " << currentCoveragePerCost << std::endl;
+          //  std::cout << "\tCURRENT W = " << w << std::endl;
             if ((costOfSeedSet + v->getCost()) <= budget && currentCoveragePerCost >= w) {
                 S.push_back(v);
                 costOfSeedSet += v->getCost();
@@ -475,10 +481,10 @@ std::vector<Vertex*> Graph::budgetedThresholdGreedy(float budget, float threshol
     auto stopTime = std::chrono::high_resolution_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(stopTime - startTime);
-    std::cout << "The budgeted threshold greedy algorithm was running for " << duration.count() << " seconds";
-    std::cout << ", with " << numberOfIterations << " iterations." << std::endl;
+    //std::cout << "The budgeted threshold greedy algorithm was running for " << duration.count() << " seconds";
+   // std::cout << ", with " << numberOfIterations << " iterations." << std::endl;
 
-     std::cout << "\n ========== ENDED BUDGETED TRESHOLD GREEDY ========== " << std::endl;
+     //std::cout << "\n ========== ENDED BUDGETED TRESHOLD GREEDY ========== " << std::endl;
     if(maxCoverage > lambdaCover(S, RRset))
         return {s};
     else
