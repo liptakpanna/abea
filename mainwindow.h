@@ -27,7 +27,8 @@ private slots:
     void setDemoBudget(float _budget);
     void setPokecBudget(float _budget);
     void setPokecThresHold(float _threshold);
-    void setDemoRRSetSize(int _size);
+    void setDemoThreshold(double _t);
+
 
 private:
     GraphManager *graphManager, *pokecManager;
@@ -47,7 +48,7 @@ private:
     QBarSet *imageExpInf, *imageBrExpInf, *imageStep, *imageBrStep;
 
     float demoBudget, pokecBudget, pokecThreshold;
-    int demoRRsetSize;
+    double demoThreshold;
 
     void setDemoPage();
     void setPokecPage();

@@ -74,3 +74,13 @@ void GraphManager::getPokecResults(float budget, float threshold)
         //g->runImageBr(); get step, expectedInf -- és ezeket emitelni
     }
 }
+
+void GraphManager::doImage(float budget, double threshold)
+{
+    emit(setNodesToDefault());
+    std::vector<Vertex*> result = g->image(budget, threshold);
+    for(Vertex *v : result) {
+        emit(paintVertex(v->getLabel()));
+    }
+    std::cout << result.size() << std::endl;
+}

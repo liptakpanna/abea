@@ -127,7 +127,7 @@ void MainWindow::on_backButton_clicked()
 
 void MainWindow::on_runDemo()
 {
-    graphManager->doBudgetedMaxCover(demoBudget, demoRRsetSize);
+    graphManager->doImage(demoBudget, demoThreshold);
 }
 
 void MainWindow::on_runPokec()
@@ -152,9 +152,9 @@ void MainWindow::setPokecBudget(float _budget)
     pokecBudget = _budget;
 }
 
-void MainWindow::setDemoRRSetSize(int _size)
+void MainWindow::setDemoThreshold(double _t)
 {
-    demoRRsetSize = _size;
+    demoThreshold = _t;
 }
 
 void MainWindow::setDemoPage()
@@ -169,7 +169,7 @@ void MainWindow::setDemoPage()
     connect(backButton, SIGNAL(clicked()), this, SLOT(on_backButton_clicked()));
 
     GraphWidget *widget = new GraphWidget(this, graphManager);
-    QPushButton *runButton = new QPushButton(tr("Run demo"));
+    QPushButton *runButton = new QPushButton(tr("Run IMAGE-BR"));
     runButton->setFixedSize(QSize(200, 50));
     runButton->setFont(QFont("Balvaria",14));
     connect(runButton, SIGNAL(clicked()), this, SLOT(on_runDemo()));
@@ -185,24 +185,24 @@ void MainWindow::setDemoPage()
     budgetInput->setFont(QFont("Balvaria",14));
     connect(budgetInput, SIGNAL(valueChanged(double)), this, SLOT(setDemoBudget(double)));
 
-    QLabel *RRsetLabel = new QLabel("Set RR set size: ");
-    RRsetLabel->setFont(QFont("Balvaria",14));
-    QSpinBox *RRsetInput = new QSpinBox();
-    RRsetInput->setRange(1,100);
-    RRsetInput->setSingleStep(10);
-    RRsetInput->setValue(20);
-    setDemoRRSetSize(RRsetInput->value());
-    RRsetInput->setFixedHeight(30);
-    RRsetInput->setFont(QFont("Balvaria",14));
-    connect(RRsetInput, SIGNAL(valueChanged(int)), this, SLOT(setDemoRRSetSize(int)));
+    QLabel *thresholdLabel = new QLabel("Set threshold: ");
+    thresholdLabel->setFont(QFont("Balvaria",14));
+    QDoubleSpinBox *thresholdInput = new QDoubleSpinBox();
+    thresholdInput->setRange(0,1.0);
+    thresholdInput->setSingleStep(0.1);
+    thresholdInput->setValue(0.05);
+    setDemoThreshold(thresholdInput->value());
+    thresholdInput->setFixedHeight(30);
+    thresholdInput->setFont(QFont("Balvaria",14));
+    connect(thresholdInput, SIGNAL(valueChanged(double)), this, SLOT(setDemoThreshold(double)));
 
     spinboxLayout->addWidget(budgetLabel);
     spinboxLayout->addWidget(budgetInput);
     spinboxLayout->setAlignment(Qt::AlignLeft);
     spinboxLayout->addSpacing(20);
 
-    spinboxLayout->addWidget(RRsetLabel);
-    spinboxLayout->addWidget(RRsetInput);
+    spinboxLayout->addWidget(thresholdLabel);
+    spinboxLayout->addWidget(thresholdInput);
     spinboxLayout->setAlignment(Qt::AlignLeft);
 
     inputLayout->addWidget(backButton);
