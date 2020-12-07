@@ -36,11 +36,25 @@ public:
     std::vector<Vertex*> image(float budget, float delta);
     std::vector<Vertex*> budgetedThresholdGreedy(float budget, float threshold, std::vector<std::vector<Vertex *>> RRset);
 	
-    float initializeThetaZero(float z, float delta, float kMin, float n, float e);
-    float initializeThetaMax(float z, float delta, float kMax, float n, float e);
+    int initializeThetaZero(float nu, float threshold, float delta, float kMin, float n, float e);
+    int initializeThetaMax(float nu, float threshold, float delta, float kMax, float n, float e);
 
-	~Graph();
+    int getKmin(std::vector<Vertex*> sortedVertices, float budget);
+    int getKmax(std::vector<Vertex*> sortedVertices, float budget);
 
+    struct stat{float time; double expectedInf; };
+
+    stat getImageBRStat(float budget, float delta);
+    stat getImageStat(float budget, float delta);
+
+    ~Graph();
+
+private:
+    double getExpectedInfluence(std::vector<Vertex *> S, int theta);
+
+    float nu = 0.7;
+    float failureProb = 0.1;
+    float approxError = 0.2;
 };
 
 #endif // GRAPH_HPP

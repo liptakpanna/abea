@@ -88,7 +88,7 @@ void MainWindow::setDemoPage()
     demoLayout = new QVBoxLayout();
 
     GraphWidget *widget = new GraphWidget(this, graphManager);
-    QPushButton *runButton = new QPushButton(tr("Run IMAGE"));
+    QPushButton *runButton = new QPushButton(tr("Run IMAGE-BR"));
     runButton->setFixedSize(QSize(200, 50));
     runButton->setFont(QFont("Balvaria",14));
     connect(runButton, SIGNAL(clicked()), this, SLOT(on_runDemo()));

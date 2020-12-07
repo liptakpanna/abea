@@ -191,11 +191,46 @@ std::vector<Vertex *> Graph::budgetedMaxCoverage(float budget, int RRsetLength)
     return budgetedMaxCoverage(budget, getRandomRRSet(RRsetLength));
 }
 
-float Graph::initializeThetaMax(float z, float delta, float kMax, float n, float e) {
+int Graph::getKmin(std::vector<Vertex *> sortedVertices, float budget)
+{
+    int kmin = 0;
+    float currBudget = 0;
+    std::vector<Vertex *>::reverse_iterator rit;
+    for(rit = sortedVertices.rbegin(); rit!= sortedVertices.rend(); rit++) {
+        Vertex *curr = *rit;
+        if(currBudget + curr->getCost() <= budget) {
+            currBudget += curr->getCost();
+            kmin++;
+        }
+        else
+            return kmin;
+    }
+    return kmin;
+}
+
+int Graph::getKmax(std::vector<Vertex *> sortedVertices, float budget)
+{
+    int kmax = 0;
+    float currBudget = 0;
+    for(Vertex *v : sortedVertices) {
+        if(currBudget + v->getCost() <= budget) {
+            currBudget += v->getCost();
+            kmax++;
+        }
+        else
+            return kmax;
+    }
+    return kmax;
+}
+
+
+int Graph::initializeThetaMax(float nu, float threshold, float delta, float kMax, float n, float e) {
+    float z = 1/exp(nu*(1-threshold));
     return (2 * n * pow( ( ( (1 - z) * sqrt( log(6 / delta) ) ) + sqrt( (1 - z) * ( ( kMax * log(n) ) + log(6 / delta) ) ) ), 2) ) / ( pow(e, 2) * kMax );
 }
 
-float Graph::initializeThetaZero(float z, float delta, float kMin, float n, float e) {
+int Graph::initializeThetaZero(float nu, float threshold, float delta, float kMin, float n, float e) {
+    float z = 1/exp(nu*(1-threshold));
     return ( 2 * n * pow( ( ( (1 - z) * sqrt( log(6 / delta) ) ) + sqrt( (1 - z) * ( ( kMin * log(n) ) + log(6 / delta) ) ) ), 2) ) / ( pow(e, 2) * n );
 }
 
@@ -204,13 +239,17 @@ std::vector<Vertex*> Graph::image(float budget, float delta){
 
     std::cout << " ====== STARTED IMAGE ====== " << std::endl;
 
-    float thetaZero = initializeThetaZero(0.1, 0.01, 1, this->getVertices().size(), 0.01);
+    std::vector<Vertex *> sortedVertices(vertices.begin(), vertices.end());
+    std::sort(sortedVertices.begin(), sortedVertices.end(),[](const Vertex* lhs, const Vertex* rhs) -> bool {
+            return lhs->getCost() < rhs->getCost();});
+
+    int thetaZero = initializeThetaZero(nu, delta, failureProb, getKmin(sortedVertices, budget), this->getVertices().size(), approxError);
     std::cout << "THETA ZERO = " << thetaZero << std::endl;
-    float thetaMax = initializeThetaMax(0.1, 0.01, 5000, this->getVertices().size(), 0.01);
+    int thetaMax = initializeThetaMax(nu, delta,failureProb, getKmax(sortedVertices,budget), this->getVertices().size(), approxError);
     std::cout << "THETA MAX = " << thetaMax << std::endl;
 
-    float theta = thetaZero;
-    float iMax = log2(thetaMax / thetaZero);
+    int theta = thetaZero;
+    float iMax = log2((float)thetaMax / (float)thetaZero);
 
     auto imageStartTime = std::chrono::high_resolution_clock::now();
     while(theta <= thetaMax) {
@@ -243,6 +282,89 @@ std::vector<Vertex*> Graph::image(float budget, float delta){
 
     std::cout << " ====== ENDED IMAGE ====== " << std::endl;
     return s1;
+}
+
+
+Graph::stat Graph::getImageBRStat(float budget, float delta)
+{
+    std::vector<Vertex*> s1;
+
+    std::vector<Vertex *> sortedVertices(vertices.begin(), vertices.end());
+    std::sort(sortedVertices.begin(), sortedVertices.end(),[](const Vertex* lhs, const Vertex* rhs) -> bool {
+            return lhs->getCost() < rhs->getCost();});
+
+    int thetaZero = initializeThetaZero(nu, delta, failureProb, getKmin(sortedVertices, budget), this->getVertices().size(), approxError);
+    std::cout << "THETA ZERO = " << thetaZero << std::endl;
+    int thetaMax = initializeThetaMax(nu, delta,failureProb, getKmax(sortedVertices,budget), this->getVertices().size(), approxError);
+    std::cout << "THETA MAX = " << thetaMax << std::endl;
+
+    float theta = thetaZero;
+    float iMax = log2(thetaMax / thetaZero);
+
+    auto imageStartTime = std::chrono::high_resolution_clock::now();
+    while(theta <= thetaMax) {
+        std::vector<std::vector<Vertex *>> R1 = this -> getRandomRRSet(theta);
+        std::vector<std::vector<Vertex *>> R2 = this -> getRandomRRSet(theta);
+
+        s1 = this->budgetedThresholdGreedy(budget, delta, R1);
+
+        int probability = this -> lambdaCover(s1, R2);
+
+        float desired = (1 - ((2 * delta) / (3 * iMax)));
+        if (probability >= desired) {
+            auto imageStopTime = std::chrono::high_resolution_clock::now();
+
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(imageStopTime - imageStartTime);
+            return stat{(float)duration.count(),getExpectedInfluence(s1, (int)theta)};
+        }
+
+        theta = 2 * theta;
+    }
+    auto imageStopTime = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(imageStopTime - imageStartTime);
+    return stat{(float)duration.count(),getExpectedInfluence(s1, (int)theta/2)};
+}
+
+Graph::stat Graph::getImageStat(float budget, float delta)
+{
+    std::vector<Vertex*> s1;
+
+    std::vector<Vertex *> sortedVertices(vertices.begin(), vertices.end());
+    std::sort(sortedVertices.begin(), sortedVertices.end(),[](const Vertex* lhs, const Vertex* rhs) -> bool {
+            return lhs->getCost() < rhs->getCost();});
+
+    int thetaZero = initializeThetaZero(nu, delta, failureProb, getKmin(sortedVertices, budget), this->getVertices().size(), approxError);
+    std::cout << "THETA ZERO = " << thetaZero << std::endl;
+    int thetaMax = initializeThetaMax(nu, delta,failureProb, getKmax(sortedVertices,budget), this->getVertices().size(), approxError);
+    std::cout << "THETA MAX = " << thetaMax << std::endl;
+
+    float theta = thetaZero;
+    float iMax = log2(thetaMax / thetaZero);
+
+    auto imageStartTime = std::chrono::high_resolution_clock::now();
+    while(theta <= thetaMax) {
+        std::vector<std::vector<Vertex *>> R1 = this -> getRandomRRSet(theta);
+        std::vector<std::vector<Vertex *>> R2 = this -> getRandomRRSet(theta);
+
+        s1 = this->budgetedMaxCoverage(budget, R1);
+
+        int probability = this -> lambdaCover(s1, R2);
+
+        float desired = (1 - ((2 * delta) / (3 * iMax)));
+        if (probability >= desired) {
+            auto imageStopTime = std::chrono::high_resolution_clock::now();
+
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(imageStopTime - imageStartTime);
+            return stat{(float)duration.count(),getExpectedInfluence(s1, (int)theta)};
+        }
+
+        theta = 2 * theta;
+    }
+    auto imageStopTime = std::chrono::high_resolution_clock::now();
+
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(imageStopTime - imageStartTime);
+    return stat{(float)duration.count(),getExpectedInfluence(s1, (int)theta/2)};
 }
 
 std::vector<Vertex*> Graph::budgetedThresholdGreedy(float budget, float threshold, std::vector<std::vector<Vertex *>> RRset) {
@@ -328,6 +450,13 @@ std::vector<Vertex*> Graph::budgetedThresholdGreedy(float budget, float threshol
         return {s};
     else
         return S;
+}
+
+double Graph::getExpectedInfluence(std::vector<Vertex *> S, int theta)
+{
+    std::vector<std::vector<Vertex *>> RR = this -> getRandomRRSet(theta);
+    int count = lambdaCover(S,RR);
+    return (double)vertices.size()/(double)theta*(double)count;
 }
 
 Graph::~Graph()

@@ -40,7 +40,7 @@ private:
     QStackedLayout *stackedLayout;
 
     float demoBudget;
-    int demoThreshold;
+    double demoThreshold;
 
     void setDemoPage();
 };

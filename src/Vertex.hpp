@@ -21,6 +21,7 @@ public:
     void setCost(float _cost) {cost = _cost;}
 	
 	float getCost() {return cost;}
+    float getCost() const {return cost;}
 	std::string getLabel() {return label;}
 	std::set<Edge*> getIncomingEdges() {return incomingEdges;}
 	std::set<Edge*> getOutgoingEdges() {return outgoingEdges;}
