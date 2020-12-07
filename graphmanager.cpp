@@ -78,14 +78,32 @@ int GraphManager::getEdgeCount()
 
 void GraphManager::getPokecResults(int edges ,float budget, float threshold)
 {
+    double sum1 = 0, sum2 = 0;
     for(int i = 1; i <= edges; i++) {
         getPokecGraph(i, i == 1);
-        Graph::stat sImage = g->getImageStat(budget, threshold);
+        for(int j = 0; j < 5; j++) {
+            Graph::stat sImage = g->getImageStat(budget, threshold);
+            sum1 += sImage.expectedInf;
+            sum2 += sImage.time;
+        }
+        emit(imageExpInf(sum1/5.0));
+        emit(imageTime(sum2/5.0));
+
+        sum1 = 0;
+        sum2 = 0;
+        for(int j = 0; j < 5; j++) {
+            Graph::stat sImageBR = g->getImageBRStat(budget, threshold);
+            sum1 += sImageBR.expectedInf;
+            sum2 += sImageBR.time;
+        }
+        emit(imageBrExpInf(sum1/5.0));
+        emit(imageBrTime(sum2/5.0));
+        /*Graph::stat sImage = g->getImageStat(budget, threshold);
         emit(imageExpInf(sImage.expectedInf));
         emit(imageTime(sImage.time));
         Graph::stat sImageBR = g->getImageBRStat(budget, threshold);
         emit(imageBrExpInf(sImageBR.expectedInf));
-        emit(imageBrTime(sImageBR.time));
+        emit(imageBrTime(sImageBR.time));*/
     }
 }
 
