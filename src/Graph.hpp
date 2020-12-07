@@ -14,6 +14,8 @@ public:
 	Graph();
     Graph(std::string source_file);
 
+    void loadPokec(std::string source_file, int minCost, int maxCost);
+
     void addVertex(Vertex *v) {vertices.insert(v);}
 	void addEdge(Edge *e);
 	

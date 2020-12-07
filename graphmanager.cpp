@@ -32,7 +32,47 @@ void GraphManager::doBudgetedMaxCover(float budget, int RRLength)
     for(Vertex *v : result) {
         emit(paintVertex(v->getLabel()));
     }
-    std::cout << result.size() << std::endl;
+}
+
+void GraphManager::getPokecGraph(int edgeCount)
+{
+    g = new Graph();
+    for(int i = 1; i <= edgeCount; i++) {
+        QTemporaryDir tempDir;
+        if (tempDir.isValid()) {
+            const QString tempFile = tempDir.path() + QString::fromStdString("/pokec_"+std::to_string(i))+".txt";
+              if (QFile::copy(QString::fromStdString(":pokec_"+std::to_string(i))+".txt", tempFile)) {
+                  g->loadPokec(tempFile.toStdString(), 10, 100);
+                  /*int count = 0;
+                  for(Vertex *v : g->getVertices()) {
+                      std::cout << v->getLabel() << " " << v->getCost() << std::endl;
+                      count++;
+                      if(count>5) break;
+                  }*/
+              }
+        }
+
+        tempDir.remove();
+    }
+}
+
+int GraphManager::getVertexCount()
+{
+    return g->getVertices().size();
+}
+
+int GraphManager::getEdgeCount()
+{
+    return g->getEdges().size();
+}
+
+void GraphManager::getPokecResults(float budget, float threshold)
+{
+    for(int i = 1; i <= 1; i++) {
+        getPokecGraph(i);
+        //g->runImage(); get step, expectedInf -- és ezeket emitelni
+        //g->runImageBr(); get step, expectedInf -- és ezeket emitelni
+    }
 }
 
 void GraphManager::doImage(float budget, double threshold)
