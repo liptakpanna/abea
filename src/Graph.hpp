@@ -54,9 +54,9 @@ public:
 private:
     double getExpectedInfluence(std::vector<Vertex *> S, int theta);
 
-    float nu = 0.7;
-    float failureProb = 0.1;
-    float approxError = 0.2;
+    float nu = 0.9;
+    float failureProb = 0.5;
+    float approxError = 0.5;
 };
 
 #endif // GRAPH_HPP

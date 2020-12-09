@@ -34,26 +34,19 @@ void GraphManager::doBudgetedMaxCover(float budget, int RRLength)
     }
 }
 
-void GraphManager::getPokecGraph(int edgeCount)
+void GraphManager::getPokecGraph(int edgeCount, bool first)
 {
-    g = new Graph();
-    for(int i = 1; i <= edgeCount; i++) {
-        QTemporaryDir tempDir;
-        if (tempDir.isValid()) {
-            const QString tempFile = tempDir.path() + QString::fromStdString("/pokec_"+std::to_string(i))+".txt";
-              if (QFile::copy(QString::fromStdString(":pokec_"+std::to_string(i))+".txt", tempFile)) {
-                  g->loadPokec(tempFile.toStdString(), 10, 100);
-                  /*int count = 0;
-                  for(Vertex *v : g->getVertices()) {
-                      std::cout << v->getLabel() << " " << v->getCost() << std::endl;
-                      count++;
-                      if(count>5) break;
-                  }*/
-              }
-        }
+    if(first)
+        g = new Graph();
 
-        tempDir.remove();
+    QTemporaryDir tempDir;
+    if (tempDir.isValid()) {
+        const QString tempFile = tempDir.path() + QString::fromStdString("/pokec_"+std::to_string(edgeCount))+".txt";
+          if (QFile::copy(QString::fromStdString(":pokec_"+std::to_string(edgeCount))+".txt", tempFile)) {
+              g->loadPokec(tempFile.toStdString(), 10, 100);
+          }
     }
+    tempDir.remove();
 }
 
 int GraphManager::getVertexCount()
@@ -66,12 +59,30 @@ int GraphManager::getEdgeCount()
     return g->getEdges().size();
 }
 
-void GraphManager::getPokecResults(float budget, float threshold)
+void GraphManager::getPokecResults(int edges ,float budget, float threshold)
 {
-    for(int i = 1; i <= 1; i++) {
-        getPokecGraph(i);
-        //g->runImage(); get step, expectedInf -- és ezeket emitelni
-        //g->runImageBr(); get step, expectedInf -- és ezeket emitelni
+    double sum1 = 0, sum2 = 0;
+    for(int i = 1; i <= edges; i++) {
+        getPokecGraph(i, i == 1);
+        for(int j = 0; j < 5; j++) {
+            Graph::stat sImage = g->getImageStat(budget, threshold);
+            sum1 += sImage.expectedInf;
+            sum2 += sImage.time;
+        }
+        std::cout << i << " hundred edges IMAGE influence: " << sum1/5.0 << " time : " << sum2/5.0 << std::endl;
+        emit(imageExpInf(sum1/5.0));
+        emit(imageTime(sum2/5.0));
+
+        sum1 = 0;
+        sum2 = 0;
+        for(int j = 0; j < 5; j++) {
+            Graph::stat sImageBR = g->getImageBRStat(budget, threshold);
+            sum1 += sImageBR.expectedInf;
+            sum2 += sImageBR.time;
+        }
+        std::cout << i << " hundred edges IMAGE-BR influence: " << sum1/5.0 << " time : " << sum2/5.0 << std::endl;
+        emit(imageBrExpInf(sum1/5.0));
+        emit(imageBrTime(sum2/5.0));
     }
 }
 
