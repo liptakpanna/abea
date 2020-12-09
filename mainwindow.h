@@ -58,7 +58,6 @@ private:
 
     void setDemoPage();
     void setPokecPage();
-    void showPokecImportDialog();
     void createCharts();
 };
 #endif // MAINWINDOW_H

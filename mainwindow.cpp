@@ -79,61 +79,10 @@ void MainWindow::on_demoButton_clicked(){
 
 void MainWindow::on_pokecButton_clicked(){
 
-    //showPokecImportDialog();
     expectedInfluenceChart->setVisible(false);
     stepCountChart->setVisible(false);
     stackedLayout->setCurrentWidget(runAlg);
 }
-
-/*void MainWindow::showPokecImportDialog(){
-    QDialog * d = new QDialog();
-    QVBoxLayout * vbox = new QVBoxLayout();
-
-    QLabel *edgeLabel = new QLabel("Set thousands edges to import ");
-    edgeLabel->setFont(QFont("Balvaria",14));
-    QSpinBox *edgeInput = new QSpinBox();
-    edgeInput->setRange(1,10);
-    edgeInput->setSingleStep(1);
-    edgeInput->setValue(5);
-    edgeInput->setFixedHeight(30);
-    edgeInput->setFont(QFont("Balvaria",14));
-
-   QLabel *costLabel = new QLabel("Set min/max edge cost");
-    costLabel->setFont(QFont("Balvaria",14));
-    QSpinBox *costMinInput = new QSpinBox();
-    costMinInput->setRange(1,500);
-    costMinInput->setSingleStep(1);
-    costMinInput->setValue(10);
-    costMinInput->setFixedHeight(30);
-    costMinInput->setFont(QFont("Balvaria",14));
-    QSpinBox *costMaxInput = new QSpinBox();
-    costMaxInput->setRange(1,500);
-    costMaxInput->setSingleStep(1);
-    costMaxInput->setValue(100);
-    costMaxInput->setFixedHeight(30);
-    costMaxInput->setFont(QFont("Balvaria",14));
-
-    QDialogButtonBox * buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
-                                                        | QDialogButtonBox::Cancel);
-
-    QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
-    QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
-
-    vbox->addWidget(edgeLabel);
-    vbox->addWidget(edgeInput);
-    vbox->addWidget(buttonBox);
-    vbox->addWidget(costLabel);
-    vbox->addWidget(costMinInput);
-    vbox->addWidget(costMaxInput);
-
-    d->setLayout(vbox);
-
-    int result = d->exec();
-    if(result == QDialog::Accepted)
-    {
-        pokecManager->getPokecGraph(edgeInput->value());
-    }
-}*/
 
 void MainWindow::on_backButton_clicked()
 {
@@ -151,10 +100,7 @@ void MainWindow::on_runPokec()
     imageTime->remove(0,imageTime->count());
     imageBrExpInf->remove(0,imageBrExpInf->count());
     imageBrTime->remove(0,imageBrTime->count());
-    /*imageExpInf = new QBarSet("IMAGE");
-    imageTime = new QBarSet("IMAGE");
-    imageBrExpInf = new QBarSet("IMAGE-BR");
-    imageBrTime = new QBarSet("IMAGE-BR");*/
+
     pokecManager->getPokecResults(pokecEdges,(float)pokecBudget, (float)pokecThreshold);
     createCharts();
     QChart *toDelete = chartViewInf->chart();
@@ -198,25 +144,21 @@ void MainWindow::setPokecEdges(int e)
 
 void MainWindow::graphManager_getImageExpectedInfluence(double inf)
 {
-    std::cout << "1:" << inf << std::endl;
     imageExpInf->append(inf);
 }
 
 void MainWindow::graphManager_getImageTime(double t)
 {
-     std::cout << "2:" << t << std::endl;
     imageTime->append(t);
 }
 
 void MainWindow::graphManager_getImageBrExpectedInfluence(double inf)
 {
-     std::cout << "3:" << inf << std::endl;
     imageBrExpInf->append(inf);
 }
 
 void MainWindow::graphManager_getImageBrTime(double t)
 {
-     std::cout << "4:" << t << std::endl;
     imageBrTime->append(t);
 }
 

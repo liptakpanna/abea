@@ -47,23 +47,6 @@ void GraphManager::getPokecGraph(int edgeCount, bool first)
           }
     }
     tempDir.remove();
-   /* for(int i = 1; i <= nodeCount; i++) {
-        QTemporaryDir tempDir;
-        if (tempDir.isValid()) {
-            const QString tempFile = tempDir.path() + QString::fromStdString("/pokec_"+std::to_string(i))+".txt";
-              if (QFile::copy(QString::fromStdString(":pokec_"+std::to_string(i))+".txt", tempFile)) {
-                  g->loadPokec(tempFile.toStdString(), 10, 100);
-                  int count = 0;
-                  for(Vertex *v : g->getVertices()) {
-                      std::cout << v->getLabel() << " " << v->getCost() << std::endl;
-                      count++;
-                      if(count>5) break;
-                  }
-              }
-        }
-
-        tempDir.remove();
-    }*/
 }
 
 int GraphManager::getVertexCount()
@@ -86,6 +69,7 @@ void GraphManager::getPokecResults(int edges ,float budget, float threshold)
             sum1 += sImage.expectedInf;
             sum2 += sImage.time;
         }
+        std::cout << i << " hundred edges IMAGE influence: " << sum1/5.0 << " time : " << sum2/5.0 << std::endl;
         emit(imageExpInf(sum1/5.0));
         emit(imageTime(sum2/5.0));
 
@@ -96,14 +80,9 @@ void GraphManager::getPokecResults(int edges ,float budget, float threshold)
             sum1 += sImageBR.expectedInf;
             sum2 += sImageBR.time;
         }
+        std::cout << i << " hundred edges IMAGE-BR influence: " << sum1/5.0 << " time : " << sum2/5.0 << std::endl;
         emit(imageBrExpInf(sum1/5.0));
         emit(imageBrTime(sum2/5.0));
-        /*Graph::stat sImage = g->getImageStat(budget, threshold);
-        emit(imageExpInf(sImage.expectedInf));
-        emit(imageTime(sImage.time));
-        Graph::stat sImageBR = g->getImageBRStat(budget, threshold);
-        emit(imageBrExpInf(sImageBR.expectedInf));
-        emit(imageBrTime(sImageBR.time));*/
     }
 }
 
